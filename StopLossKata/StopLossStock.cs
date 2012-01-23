@@ -1,19 +1,20 @@
-﻿using System;
-
-namespace StopLossKata
+﻿namespace StopLossKata
 {
     public class StopLossStock
     {
-        readonly IBus bus;
+        readonly int _limit;
+        readonly IBus _bus;
 
-        public StopLossStock(int price, int limit, IBus bus)
+        public StopLossStock(int limit, IBus bus)
         {
-            this.bus = bus;
+            _limit = limit;
+            _bus = bus;
         }
 
         public void Handle(PriceChange priceChange)
         {
-            bus.Publish(new TriggerStockLoss());
+            if (priceChange.NewPrice <= _limit)
+                _bus.Publish(new TriggerStockLoss());
         }
     }
 }

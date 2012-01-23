@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Machine.Specifications;
+﻿using Machine.Specifications;
 
 namespace StopLossKata
 {
