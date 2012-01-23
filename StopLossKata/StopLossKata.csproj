@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bus.cs" />
+    <Compile Include="MessagesAsserts.cs" />
     <Compile Include="PriceChange.cs" />
     <Compile Include="StopLossStock.cs" />
     <Compile Include="StopLossSpecs.cs" />

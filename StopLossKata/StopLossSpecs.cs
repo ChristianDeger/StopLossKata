@@ -11,10 +11,9 @@ namespace StopLossKata
             stock = new StopLossStock(10, 1, bus);
         };
 
-        It should_not_trigger_stock_loss = () => bus.Messages.ShouldNotContain(m => m.GetType() == typeof(TriggerStockLoss));
+        It should_not_trigger_stock_loss = () => bus.ShouldNotTriggerStopLoss();
 
         static StopLossStock stock;
-        static bool stockLossTriggered;
         static FakeBus bus;
     }
 
@@ -28,10 +27,9 @@ namespace StopLossKata
             stock.Handle(new PriceChange(9));
         };
 
-        It should_trigger_stock_loss = () => bus.Messages.ShouldContain(m => m.GetType() == typeof(TriggerStockLoss));
+        It should_trigger_stock_loss = () => bus.ShouldTriggerStopLoss();
 
         static StopLossStock stock;
-        static bool stockLossTriggered;
         static FakeBus bus;
     }
 }
