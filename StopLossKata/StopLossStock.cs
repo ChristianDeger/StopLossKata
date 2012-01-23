@@ -4,8 +4,16 @@ namespace StopLossKata
 {
     public class StopLossStock
     {
-        public StopLossStock(int price, int limit, Action stockLossTrigger)
+        readonly IBus bus;
+
+        public StopLossStock(int price, int limit, IBus bus)
         {
+            this.bus = bus;
+        }
+
+        public void Handle(PriceChange priceChange)
+        {
+            bus.Publish(new TriggerStockLoss());
         }
     }
 }

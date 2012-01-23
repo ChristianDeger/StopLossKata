@@ -43,9 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bus.cs" />
+    <Compile Include="PriceChange.cs" />
     <Compile Include="StopLossStock.cs" />
     <Compile Include="StopLossSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TriggerStockLoss.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
