@@ -61,7 +61,7 @@ namespace StopLossKata
     }
 
     [Subject(typeof(StopLossStock))]
-    public class When_buying_stop_loss_stock_and_price_drops_within_limit
+    public class When_buying_stop_loss_stock_and_price_drops_within_limit_for_30_seconds
     {
         Establish context = () =>
         {
@@ -69,7 +69,11 @@ namespace StopLossKata
             stock = new StopLossStock(10, 1, bus);
         };
 
-        Because of = () => stock.Handle(new PriceChanged(9));
+        Because of = () =>
+        {
+            stock.Handle(new PriceChanged(9));
+            bus.TimewarpSeconds(30);
+        };
 
         It should_not_trigger_stock_loss = () => bus.ShouldNotTriggerStopLoss();
 
