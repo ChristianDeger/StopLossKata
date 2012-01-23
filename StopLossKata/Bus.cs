@@ -12,7 +12,6 @@ namespace StopLossKata
     {
         public readonly List<object> Messages = new List<object>();
         private readonly List<Timeout> _timeouts = new List<Timeout>();
-        int _runningTimeInSeconds = 0;
 
         public void Publish(object message)
         {
@@ -25,11 +24,11 @@ namespace StopLossKata
 
         public void TimewarpSeconds(int seconds)
         {
-            _runningTimeInSeconds += seconds;
-            var callbacks = _timeouts.Where(t => t.Delay <= _runningTimeInSeconds).Select(t => t.Callback);
-            foreach (var callback in callbacks)
+            var timeoutsToTrigger = _timeouts.Where(t => t.Delay <= seconds).ToList();
+            foreach (var timeout in timeoutsToTrigger)
             {
-                callback();
+                timeout.Callback();
+                _timeouts.Remove(timeout);
             }
         }
     }
