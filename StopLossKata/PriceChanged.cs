@@ -1,10 +1,10 @@
 namespace StopLossKata
 {
-    public class PriceChange
+    public class PriceChanged
     {
         readonly int _newPrice;
 
-        public PriceChange(int newPrice)
+        public PriceChanged(int newPrice)
         {
             _newPrice = newPrice;
         }
@@ -13,7 +13,7 @@ namespace StopLossKata
         {
             get
             {
-                return this._newPrice;
+                return _newPrice;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace StopLossKata
 {
@@ -9,11 +10,25 @@ namespace StopLossKata
 
     public class FakeBus : IBus
     {
-        public List<object> Messages = new List<object>();
+        public readonly List<object> Messages = new List<object>();
+        private readonly List<Timeout> _timeouts = new List<Timeout>(); 
 
         public void Publish(object message)
         {
-            Messages.Add(message);
+            var timeout = message as Timeout;
+            if (timeout != null)
+                _timeouts.Add(timeout);
+            else
+                Messages.Add(message);
+        }
+
+        public void TimewarpSeconds(int seconds)
+        {
+            var callbacks = _timeouts.Where(t => t.Delay <= seconds).Select(t => t.Callback);
+            foreach (var callback in callbacks)
+            {
+                callback();
+            }
         }
     }
 }

@@ -45,10 +45,11 @@
   <ItemGroup>
     <Compile Include="Bus.cs" />
     <Compile Include="MessagesAsserts.cs" />
-    <Compile Include="PriceChange.cs" />
+    <Compile Include="PriceChanged.cs" />
     <Compile Include="StopLossStock.cs" />
     <Compile Include="StopLossSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Timeout.cs" />
     <Compile Include="TriggerStockLoss.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -13,14 +13,19 @@
             _bus = bus;
         }
 
-        public void Handle(PriceChange priceChange)
+        public void Handle(PriceChanged priceChanged)
         {
-            if (priceChange.NewPrice < _currentPrice - _limit)
+            if (priceChanged.NewPrice < _currentPrice - _limit)
             {
-                _bus.Publish(new TriggerStockLoss());
+                _bus.Publish(new Timeout(30, PriceDropTimeout));
             }
 
-            _currentPrice = priceChange.NewPrice;
+            _currentPrice = priceChanged.NewPrice;
+        }
+
+        private void PriceDropTimeout()
+        {
+            _bus.Publish(new TriggerStockLoss());
         }
     }
 }
