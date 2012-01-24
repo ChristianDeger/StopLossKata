@@ -12,7 +12,7 @@
         {
             _currentPrice = initialPrice;
             _offset = offset;
-            _limit = _currentPrice - _offset;
+            _limit = CalculateLimit(initialPrice);
             _bus = bus;
         }
 
@@ -22,28 +22,37 @@
             if (priceChanged.NewPrice < _limit)
             {
                 var id = _correlationId;
-                _bus.Publish(new Timeout(30, () => PriceDropTimeout(id)));
+                _bus.Publish(new Timeout(30, () => PriceDrop(id)));
             }
 
             if (priceChanged.NewPrice > _currentPrice)
             {
                 var id = _correlationId;
-                _bus.Publish(new Timeout(15, () => SetNewLimitTimout(id, priceChanged.NewPrice - _offset)));
+                _bus.Publish(new Timeout(15, () => SetNewLimit(id, priceChanged.NewPrice)));
             }
 
             _currentPrice = priceChanged.NewPrice;
         }
 
-        private void PriceDropTimeout(int correlationId)
+        void PriceDrop(int correlationId)
         {
             if (_correlationId == correlationId)
+            {
                 _bus.Publish(new TriggerStockLoss());
+            }
         }
 
-        private void SetNewLimitTimout(int correlationId, int limit)
+        void SetNewLimit(int correlationId, int price)
         {
             if (_correlationId == correlationId)
-                _limit = limit;
+            {
+                _limit = CalculateLimit(price);
+            }
+        }
+
+        int CalculateLimit(int price)
+        {
+            return price - _offset;
         }
     }
 }

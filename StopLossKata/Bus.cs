@@ -7,6 +7,9 @@ namespace StopLossKata
         void Publish(object message);
     }
 
+    /// <summary>
+    /// Bus and timeout service should be separated
+    /// </summary>
     public class FakeBus : IBus
     {
         public readonly List<object> Messages = new List<object>();
@@ -23,20 +26,14 @@ namespace StopLossKata
 
         public void TimewarpSeconds(int seconds)
         {
-            var timeoutsToRemove = new List<Timeout>();
-            foreach (var timeout in _timeouts)
+            foreach (var timeout in _timeouts.ToArray())
             {
                 timeout.Delay -= seconds;
                 if (timeout.Delay <= 0)
                 {
                     timeout.Callback();
-                    timeoutsToRemove.Add(timeout);
+                    _timeouts.Remove(timeout);
                 }
-            }
-
-            foreach (var timeout in timeoutsToRemove)
-            {
-                _timeouts.Remove(timeout);
             }
         }
     }
