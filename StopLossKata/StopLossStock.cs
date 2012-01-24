@@ -7,6 +7,7 @@
         int _currentPrice;
         int _limit;
         bool _allowPriceDropTimeout;
+        bool _allowNewLimit;
 
         public StopLossStock(int initialPrice, int offset, IBus bus)
         {
@@ -20,8 +21,8 @@
         {
             if (priceChanged.NewPrice < _limit)
             {
-                _bus.Publish(new Timeout(30, PriceDropTimeout));
                 _allowPriceDropTimeout = true;
+                _bus.Publish(new Timeout(30, PriceDropTimeout));
             }
             else
             {
@@ -29,7 +30,14 @@
             }
 
             if (priceChanged.NewPrice > _currentPrice)
+            {
+                _allowNewLimit = true;
                 _bus.Publish(new Timeout(15, () => SetNewLimitTimout(priceChanged.NewPrice - _offset)));
+            }
+            else
+            {
+                _allowNewLimit = false;
+            }
 
             _currentPrice = priceChanged.NewPrice;
         }
@@ -42,7 +50,8 @@
 
         private void SetNewLimitTimout(int limit)
         {
-            _limit = limit;
+            //if (_allowNewLimit)
+            //    _limit = limit;
         }
     }
 }

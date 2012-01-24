@@ -4,12 +4,11 @@ namespace StopLossKata
 {
     public class Timeout
     {
-        readonly int _delay;
         readonly Action _callback;
 
         public Timeout(int delay, Action callback)
         {
-            _delay = delay;
+            Delay = delay;
             _callback = callback;
         }
 
@@ -21,12 +20,6 @@ namespace StopLossKata
             }
         }
 
-        public int Delay
-        {
-            get
-            {
-                return _delay;
-            }
-        }
+        public int Delay { get; set; }
     }
 }

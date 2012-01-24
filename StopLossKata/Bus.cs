@@ -24,10 +24,19 @@ namespace StopLossKata
 
         public void TimewarpSeconds(int seconds)
         {
-            var timeoutsToTrigger = _timeouts.Where(t => t.Delay <= seconds).ToList();
-            foreach (var timeout in timeoutsToTrigger)
+            var timeoutsToRemove = new List<Timeout>();
+            foreach (var timeout in _timeouts)
             {
-                timeout.Callback();
+                timeout.Delay -= seconds;
+                if (timeout.Delay <= 0)
+                {
+                    timeout.Callback();
+                    timeoutsToRemove.Add(timeout);
+                }
+            }
+
+            foreach (var timeout in timeoutsToRemove)
+            {
                 _timeouts.Remove(timeout);
             }
         }
