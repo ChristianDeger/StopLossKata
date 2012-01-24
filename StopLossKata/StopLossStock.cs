@@ -6,8 +6,7 @@
         readonly IBus _bus;
         int _currentPrice;
         int _limit;
-        bool _allowPriceDropTimeout;
-        bool _allowNewLimit;
+        int _correlationId;
 
         public StopLossStock(int initialPrice, int offset, IBus bus)
         {
@@ -19,39 +18,32 @@
 
         public void Handle(PriceChanged priceChanged)
         {
+            _correlationId += 1;
             if (priceChanged.NewPrice < _limit)
             {
-                _allowPriceDropTimeout = true;
-                _bus.Publish(new Timeout(30, PriceDropTimeout));
-            }
-            else
-            {
-                _allowPriceDropTimeout = false;
+                var id = _correlationId;
+                _bus.Publish(new Timeout(30, () => PriceDropTimeout(id)));
             }
 
             if (priceChanged.NewPrice > _currentPrice)
             {
-                _allowNewLimit = true;
-                _bus.Publish(new Timeout(15, () => SetNewLimitTimout(priceChanged.NewPrice - _offset)));
-            }
-            else
-            {
-                _allowNewLimit = false;
+                var id = _correlationId;
+                _bus.Publish(new Timeout(15, () => SetNewLimitTimout(id, priceChanged.NewPrice - _offset)));
             }
 
             _currentPrice = priceChanged.NewPrice;
         }
 
-        private void PriceDropTimeout()
+        private void PriceDropTimeout(int correlationId)
         {
-            if (_allowPriceDropTimeout)
+            if (_correlationId == correlationId)
                 _bus.Publish(new TriggerStockLoss());
         }
 
-        private void SetNewLimitTimout(int limit)
+        private void SetNewLimitTimout(int correlationId, int limit)
         {
-            //if (_allowNewLimit)
-            //    _limit = limit;
+            if (_correlationId == correlationId)
+                _limit = limit;
         }
     }
 }
